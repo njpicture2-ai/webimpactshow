@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}À-propos - WEB IMPACT SHOW{% endblock %}
+
+{% block extra_styles %}
+<style>
+    body {
+        background: white !important;
+    }
+
+    .about-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin: 30px auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        max-width: 1200px;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid #667eea;
+    }
+
+    .about-header h1 {
+        color: #667eea;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        font-weight: 800;
+    }
+
+    .about-header .subtitle {
+        color: #764ba2;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .section-icon {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #1e3c72;
+        font-size: 2em;
+        margin-bottom: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-content {
+        color: #333;
+        font-size: 1.1em;
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+    .section-content p {
+        margin-bottom: 15px;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 25px;
+    }
+
+    .value-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .value-card h3 {
+        color: #667eea;
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .value-card p {
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .objectives-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .objectives-list li {
+        background: #f8f9fa;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border-left: 5px solid #667eea;
+        transition: all 0.3s;
+    }
+
+    .objectives-list li:hover {
+        background: #e9ecef;
+        transform: translateX(10px);
+    }
+
+    .objectives-list li strong {
+        color: #1e3c72;
+        font-size: 1.15em;
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin: 30px 0;
+        text-align: center;
+        font-size: 1.2em;
+        line-height: 1.8;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .highlight-box strong {
+        font-size: 1.05em;
+        text-decoration: underline;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .team-member-card {
+        background: white;
+        padding: 30px 20px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .team-member-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .team-photo-container {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .team-photo {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .team-photo-placeholder {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 4em;
+        font-weight: bold;
+        border: 5px solid #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .team-member-name {
+        color: #1e3c72;
+        font-size: 1.5em;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .team-member-role {
+        color: #764ba2;
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .team-member-description {
+        color: #666;
+        font-size: 0.95em;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 20px;
+        }
+
+        .about-header h1 {
+            font-size: 1.8em;
+        }
+
+        .about-header .subtitle {
+            font-size: 1em;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+        }
+
+        .section-content {
+            font-size: 1em;
+        }
+
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .team-photo, .team-photo-placeholder {
+            width: 150px;
+            height: 150px;
+        }
+        
+        .team-photo-placeholder {
+            font-size: 3em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <div class="header-text">
+        <h1>WEB IMPACT SHOW</h1>
+        <div class="subtitle">Concours des créateurs de contenu Web - 1ère Édition</div>
+    </div>
+    
+    <!-- Menu Hamburger -->
+    {% if session.user_id %}
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        <div class="hamburger-label">Menu</div>
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="dropdown-menu">
+        <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Accueil</a>
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-bar"></i> Tableau de Bord</a>
+        <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> À-propos</a>
+        {% if session.admin_logged_in %}
+        <a href="{{ url_for('admin_panel') }}"><i class="fas fa-cog"></i> Panneau Admin</a>
+        <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion Admin</a>
+        {% else %}
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="about-container">
+    <div class="about-header">
+        <h1>🌟 À PROPOS DU WEB IMPACT SHOW</h1>
+        <div class="subtitle">Concours de Créateurs de Contenu – Lubumbashi, RDC</div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-star"></i></span>
+            QUI SOMMES-NOUS ?
+        </h2>
+        <div class="section-content">
+            <p>
+                Le <strong>WEB IMPACT SHOW</strong> est un concours innovant dédié à la valorisation des talents congolais dans le domaine du contenu digital.
+            </p>
+            <p>
+                Basé à <strong>Lubumbashi</strong>, il met en avant les influenceurs, vidéastes, tiktokeurs, blogueurs, réalisateurs, entrepreneurs et modélistes qui utilisent le web comme un outil d'expression, de créativité et d'impact social.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-bullseye"></i></span>
+            MISSION
+        </h2>
+        <div class="section-content">
+            <p>
+                La mission du <strong>WEB IMPACT SHOW</strong> est de découvrir, promouvoir et récompenser l'excellence créative de la jeunesse congolaise, tout en offrant une plateforme d'expression et de reconnaissance aux talents émergents.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-eye"></i></span>
+            VISION
+        </h2>
+        <div class="section-content">
+            <p>
+                Notre vision est de faire de la RDC un <strong>hub africain de la créativité numérique</strong>, en formant une génération de créateurs capables de rayonner à l'échelle internationale, tout en valorisant la culture et l'innovation locale.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-gem"></i></span>
+            NOS VALEURS
+        </h2>
+        <div class="section-content">
+            <p style="margin-bottom: 30px;">Le concours repose sur des valeurs fortes :</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <h3>🎨 Créativité</h3>
+                <p>Pour encourager l'expression originale.</p>
+            </div>
+            <div class="value-card">
+                <h3>💡 Innovation</h3>
+                <p>Pour stimuler de nouvelles idées.</p>
+            </div>
+            <div class="value-card">
+                <h3>⭐ Excellence</h3>
+                <p>Pour viser la qualité et la rigueur.</p>
+            </div>
+            <div class="value-card">
+                <h3>🏆 Leadership</h3>
+                <p>Pour inspirer et influencer positivement.</p>
+            </div>
+            <div class="value-card">
+                <h3>🌍 Impact Social</h3>
+                <p>Pour transformer la société par le numérique.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-trophy"></i></span>
+            OBJECTIFS SPÉCIFIQUES
+        </h2>
+        <div class="section-content">
+            <p style="margin-bottom: 30px;">Les objectifs spécifiques du WEB IMPACT SHOW sont de :</p>
+        </div>
+        <ul class="objectives-list">
+            <li>
+                <strong>1.</strong> Identifier et promouvoir les meilleurs talents du contenu digital en RDC.
+            </li>
+            <li>
+                <strong>2.</strong> Récompenser les créateurs les plus méritants.
+            </li>
+            <li>
+                <strong>3.</strong> Encourager l'entrepreneuriat créatif.
+            </li>
+            <li>
+                <strong>4.</strong> Créer un réseau national de jeunes créateurs.
+            </li>
+            <li>
+                <strong>5.</strong> Sensibiliser à l'usage responsable des médias numériques.
+            </li>
+            <li>
+                <strong>6.</strong> Faire de Lubumbashi un centre de rayonnement du talent congolais et de l'innovation digitale.
+            </li>
+        </ul>
+    </div>
+
+    <!-- Section Équipe Organisatrice -->
+    {% if team_members %}
+    <div class="section">
+        <h2 class="section-title">
+            <span class="section-icon"><i class="fas fa-users"></i></span>
+            NOTRE ÉQUIPE ORGANISATRICE
+        </h2>
+        <div class="section-content" style="margin-bottom: 30px;">
+            <p>Découvrez les personnes passionnées qui travaillent chaque jour pour faire du WEB IMPACT SHOW un événement exceptionnel !</p>
+        </div>
+        
+        <div class="team-grid">
+            {% for member in team_members %}
+            <div class="team-member-card">
+                <div class="team-photo-container">
+                    {% if member.photo_data %}
+                    <img src="{{ url_for('get_team_photo', member_id=member.id) }}" alt="{{ member.name }}" class="team-photo">
+                    {% else %}
+                    <div class="team-photo-placeholder">
+                        {{ member.name[0] }}
+                    </div>
+                    {% endif %}
+                </div>
+                <h4 class="team-member-name">{{ member.name }}</h4>
+                <p class="team-member-role">{{ member.role }}</p>
+                {% if member.description %}
+                <p class="team-member-description">{{ member.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="highlight-box">
+        <i class="fas fa-heart" style="font-size: 2em; margin-bottom: 15px; display: block;"></i>
+        <strong>Le WEB IMPACT SHOW, c'est bien plus qu'un concours :<br>
+        c'est une plateforme de transformation, d'inspiration et de fierté nationale, au service d'une jeunesse visionnaire et créative.</strong>
+    </div>
+</div>
+{% endblock %}

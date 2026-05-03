@@ -1,0 +1,842 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    /* Animation d'ouverture de la page */
+    @keyframes fadeInPage {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes slideInTop {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInCard {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes curtainOpen {
+        from {
+            clip-path: inset(0 50% 0 50%);
+            opacity: 0;
+        }
+        to {
+            clip-path: inset(0 0 0 0);
+            opacity: 1;
+        }
+    }
+
+    /* Conteneur principal avec animation */
+    .content-wrapper {
+        animation: fadeInPage 0.8s ease-out;
+    }
+
+    .welcome-banner {
+        background: rgba(255,255,255,0.95);
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        text-align: center;
+        animation: slideInTop 0.6s ease-out;
+    }
+
+    .welcome-banner h3 {
+        color: #000000;
+        margin-bottom: 2px;
+        font-size: 0.6em;
+        font-weight: 600;
+    }
+
+    .welcome-banner p {
+        color: #333333;
+        font-size: 0.55em;
+        margin: 0;
+    }
+
+    .voting-status {
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-align: center;
+        margin-bottom: 12px;
+        font-weight: 600;
+        font-size: 0.85em;
+    }
+
+    .voting-open {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .voting-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .search-container {
+        background: white;
+        padding: 10px 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        animation: slideInTop 0.8s ease-out 0.2s both;
+    }
+
+    .search-box {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        border: 1.5px solid #667eea;
+        border-radius: 6px;
+        outline: none;
+        transition: all 0.3s;
+    }
+
+    .search-box:focus {
+        border-color: #764ba2;
+        box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #667eea;
+        font-size: 0.95em;
+    }
+
+    .category-filter-btn {
+        padding: 10px 15px;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 8px;
+        font-size: 0.9em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .category-filter-btn:hover {
+        background: #f0f4ff;
+        transform: translateY(-2px);
+    }
+
+    .category-filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: #667eea;
+    }
+
+    .domain-section {
+        margin-bottom: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .domain-header {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 15px;
+        font-weight: 700;
+        font-size: 0.85em;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s;
+        border: none;
+        border-radius: 8px;
+    }
+
+    .domain-header:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .domain-header.active {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46a2 100%);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    }
+
+    .domain-count {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+
+    .candidates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .candidate-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        position: relative;
+        opacity: 0;
+        animation: slideInCard 0.6s ease-out forwards;
+    }
+
+    .share-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+        border: 2px solid #d4af37;
+        border-radius: 50%;
+        color: #d4af37;
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    }
+
+    .share-btn:hover {
+        transform: scale(1.15);
+        background: #d4af37;
+        color: #1a1a1a;
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .share-btn:active {
+        transform: scale(0.95);
+    }
+
+    .share-toast {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+        color: #d4af37;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        z-index: 9999;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        border: 2px solid #d4af37;
+        animation: toastFade 2.5s ease-out forwards;
+    }
+
+    @keyframes toastFade {
+        0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    }
+
+    .candidate-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+
+    .candidate-eliminated {
+        position: relative;
+    }
+
+    .candidate-eliminated::after {
+        content: "CANDIDAT ÉLIMINÉ";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5em;
+        font-weight: 800;
+        border-radius: 15px;
+        z-index: 10;
+    }
+
+    .candidate-photo-wrapper {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+
+    .candidate-info-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+        padding: 20px 15px 15px;
+        color: white;
+    }
+
+    .candidate-number {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 50px;
+        height: 50px;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        font-weight: 700;
+        z-index: 5;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+    }
+
+    .candidate-photo {
+        width: 100%;
+        height: 380px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .candidate-photo:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .candidate-name-overlay {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+
+    .vote-count {
+        text-align: center;
+        font-size: 1.8em;
+        font-weight: 700;
+        color: #667eea;
+        margin: 15px 0;
+    }
+
+    .vote-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .vote-btn.vote-active {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        font-size: 1.4em;
+        padding: 18px;
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    .vote-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(17, 153, 142, 0.4);
+    }
+
+    .vote-btn.vote-active:hover {
+        box-shadow: 0 12px 30px rgba(245, 87, 108, 0.6);
+    }
+
+    .vote-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .transaction-info {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .transaction-info strong {
+        color: #856404;
+        font-size: 1.2em;
+    }
+
+    /* OPTIMISATION MOBILE - Page d'Accueil */
+    @media (max-width: 768px) {
+        .candidates-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .welcome-banner {
+            padding: 3px 6px;
+            margin-bottom: 6px;
+            border-radius: 3px;
+        }
+
+        .welcome-banner h3 {
+            font-size: 0.5em;
+            margin-bottom: 1px;
+        }
+
+        .welcome-banner p {
+            font-size: 0.45em;
+        }
+
+        .voting-status {
+            padding: 4px 6px;
+            font-size: 0.65em;
+        }
+
+        .candidate-card {
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .candidate-number {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+
+        .candidate-photo {
+            height: 350px;
+        }
+
+        .candidate-name {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .vote-count {
+            font-size: 1.4em;
+            margin: 12px 0;
+        }
+
+        .vote-btn {
+            padding: 12px;
+            font-size: 1em;
+        }
+
+        .transaction-info {
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .transaction-info strong {
+            font-size: 1em;
+        }
+
+        .candidate-eliminated::after {
+            font-size: 1.2em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .welcome-banner {
+            padding: 2px 5px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+
+        .welcome-banner h3 {
+            font-size: 0.45em;
+            margin-bottom: 1px;
+        }
+
+        .welcome-banner p {
+            font-size: 0.4em;
+        }
+
+        .voting-status {
+            padding: 3px 5px;
+            font-size: 0.6em;
+            margin-bottom: 8px;
+        }
+
+        .search-container {
+            padding: 6px 8px;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            padding: 5px 8px;
+            font-size: 0.75em;
+        }
+
+        .candidate-photo {
+            height: 320px;
+        }
+
+        .candidate-name-overlay {
+            font-size: 1.2em;
+        }
+
+        .candidate-name {
+            font-size: 1.1em;
+        }
+
+        .vote-count {
+            font-size: 1.2em;
+        }
+
+        .vote-btn {
+            padding: 10px;
+            font-size: 0.95em;
+        }
+
+        .candidate-number {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1em;
+            top: 12px;
+            left: 12px;
+        }
+
+        .candidate-eliminated::after {
+            font-size: 1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <div class="header-text">
+        <h1>WEB IMPACT SHOW</h1>
+        <div class="subtitle">Concours des créateurs de contenu Web - 1ère Édition</div>
+    </div>
+    
+    <!-- Menu Hamburger -->
+    {% if session.user_id %}
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        <div class="hamburger-label">Menu</div>
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="dropdown-menu">
+        <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Accueil</a>
+        {% if is_laureates_visible %}
+        <a href="{{ url_for('laureates') }}"><i class="fas fa-trophy"></i> Lauréats</a>
+        {% endif %}
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-bar"></i> Tableau de Bord</a>
+        <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> À-propos</a>
+        {% if session.admin_logged_in %}
+        <a href="{{ url_for('admin_panel') }}"><i class="fas fa-cog"></i> Panneau Admin</a>
+        <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion Admin</a>
+        {% else %}
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="welcome-banner">
+    <h3><i class="fas fa-user"></i> Bienvenue, {{ user.full_name }}!</h3>
+    <p>Votez pour votre candidat préféré</p>
+    {% if is_laureates_visible %}
+    <a href="{{ url_for('laureates') }}" class="laureates-btn" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 15px; padding: 12px 25px; background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%); color: #1a1a1a; text-decoration: none; border-radius: 30px; font-weight: 700; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); transition: all 0.3s ease;">
+        <i class="fas fa-trophy"></i> Voir les Lauréats
+    </a>
+    {% endif %}
+</div>
+
+{% if is_voting_open %}
+<div class="voting-status voting-open">
+    <i class="fas fa-check-circle"></i> Vote Ouvert
+</div>
+{% else %}
+<div class="voting-status voting-closed">
+    <i class="fas fa-times-circle"></i> Vote Fermé
+</div>
+{% endif %}
+
+{% if active_transaction %}
+<div class="transaction-info">
+    <strong><i class="fas fa-ticket-alt"></i> {{ active_transaction.votes_remaining }} votes prêts !</strong>
+    <p>Cliquez sur le bouton pour attribuer tous les votes en une seule fois</p>
+</div>
+{% endif %}
+
+<div class="search-container">
+    <div style="position: relative;">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Rechercher un candidat par nom ou numéro...">
+        <i class="fas fa-search search-icon"></i>
+    </div>
+</div>
+
+<!-- Organisation par domaine -->
+{% set all_groups = [
+    {'name': 'INFLUENCEURS & COMMUNICATION DIGITALE', 'icon': '🎯'},
+    {'name': 'REALISATION VISUEL & CINÉMATOGRAPHIQUE', 'icon': '🎬'},
+    {'name': 'ARTS VISUELS & DESIGN NUMÉRIQUE', 'icon': '📸'},
+    {'name': 'JOURNALISME & ANALYSE DIGITALE', 'icon': '📰'},
+    {'name': 'ENTREPRENEURIAT & INNOVATION DIGITALE', 'icon': '💡'},
+    {'name': 'SPIRITUALITÉ & IMPACT SOCIAL', 'icon': '✨'}
+] %}
+
+{% for group in all_groups %}
+    {% set group_candidates = candidates|selectattr('category.group_name', 'equalto', group.name)|list if candidates else [] %}
+    
+    <!-- En-tête du domaine -->
+    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+        <div class="domain-header" style="cursor: default; margin-bottom: 15px;">
+            <span>{{ group.icon }} {{ group.name|upper }}</span>
+            <span class="domain-count">({{ group_candidates|length }} candidat{{ 's' if group_candidates|length > 1 else '' }})</span>
+        </div>
+        
+        <!-- Candidats de ce domaine -->
+        {% if group_candidates %}
+        <div class="candidates-grid" style="margin-top: 15px;">
+            {% for candidate in group_candidates %}
+            <div class="candidate-card {% if candidate.is_eliminated %}candidate-eliminated{% endif %}" data-candidate-name="{{ candidate.name }}" data-candidate-number="{{ candidate.number }}">
+                <button class="share-btn" onclick="shareCandidate({{ candidate.id }}, '{{ candidate.name }}', {{ candidate.number }})" title="Partager">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <div class="candidate-photo-wrapper">
+                    <div class="candidate-number">{{ candidate.number }}</div>
+                    {% if candidate.photo_data %}
+                    <img src="{{ url_for('get_candidate_photo', candidate_id=candidate.id) }}" alt="{{ candidate.name }}" class="candidate-photo" loading="lazy">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x400?text=N°{{ candidate.number }}" alt="{{ candidate.name }}" class="candidate-photo" loading="lazy">
+                    {% endif %}
+                    
+                    <div class="candidate-info-overlay">
+                        <div class="candidate-name-overlay">{{ candidate.name }}</div>
+                        {% if candidate.category %}
+                        <div style="font-size: 0.65em; color: #ffd700; margin-top: 5px; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">
+                            📁 {{ candidate.category.name }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if not (voting_status and voting_status.votes_hidden) %}
+                <div class="vote-count" id="votes-{{ candidate.id }}">
+                    <i class="fas fa-star"></i> {{ candidate.vote_count }} votes
+                </div>
+                {% endif %}
+                
+                {% if is_voting_open and not candidate.is_eliminated %}
+                    {% if active_transaction and active_transaction.candidate_id == candidate.id %}
+                    <button class="vote-btn vote-active" onclick="voteAll({{ candidate.id }}, {{ active_transaction.votes_remaining }})">
+                        <i class="fas fa-fire"></i> VOTER {{ active_transaction.votes_remaining }}
+                    </button>
+                    {% else %}
+                    <a href="{{ url_for('select_package', candidate_id=candidate.id) }}" class="vote-btn" style="text-align: center; text-decoration: none; display: block;">
+                        <i class="fas fa-shopping-cart"></i> Payer les votes
+                    </a>
+                    {% endif %}
+                {% else %}
+                <button class="vote-btn" disabled>
+                    <i class="fas fa-ban"></i> Vote Non Disponible
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center; color: #999; padding: 20px; font-style: italic;">
+            Aucun candidat dans cette catégorie pour le moment
+        </p>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Fonction de partage du lien candidat
+function shareCandidate(candidateId, candidateName, candidateNumber) {
+    const baseUrl = window.location.origin;
+    const shareUrl = `${baseUrl}/?vote=${candidateId}`;
+    const shareTitle = `WEB IMPACT SHOW - Votez pour N°${candidateNumber} ${candidateName}`;
+    const shareText = `🌟 Soutenez ${candidateName} au WEB IMPACT SHOW ! Cliquez pour voter : `;
+    
+    // Afficher le toast de confirmation
+    function showToast(message) {
+        const existingToast = document.querySelector('.share-toast');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'share-toast';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 2500);
+    }
+    
+    // Utiliser l'API Web Share si disponible (mobile)
+    if (navigator.share) {
+        navigator.share({
+            title: shareTitle,
+            text: shareText,
+            url: shareUrl
+        }).then(() => {
+            showToast('Lien partagé !');
+        }).catch((error) => {
+            if (error.name !== 'AbortError') {
+                copyToClipboard(shareUrl, showToast);
+            }
+        });
+    } else {
+        // Fallback : copier dans le presse-papiers
+        copyToClipboard(shareUrl, showToast);
+    }
+}
+
+// Copier dans le presse-papiers
+function copyToClipboard(text, showToast) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Lien copié !');
+        }).catch(() => {
+            fallbackCopyToClipboard(text, showToast);
+        });
+    } else {
+        fallbackCopyToClipboard(text, showToast);
+    }
+}
+
+// Fallback pour les anciens navigateurs
+function fallbackCopyToClipboard(text, showToast) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showToast('Lien copié !');
+    } catch (err) {
+        showToast('Erreur de copie');
+    }
+    document.body.removeChild(textArea);
+}
+
+// Animation en cascade des cartes au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    const candidateCards = document.querySelectorAll('.candidate-card');
+    candidateCards.forEach((card, index) => {
+        card.style.animationDelay = `${0.4 + (index * 0.1)}s`;
+    });
+});
+
+// Fonction de recherche en temps réel
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase().trim();
+    const candidateCards = document.querySelectorAll('.candidate-card');
+    
+    candidateCards.forEach(card => {
+        const candidateName = card.getAttribute('data-candidate-name').toLowerCase();
+        const candidateNumber = card.getAttribute('data-candidate-number');
+        
+        if (candidateName.includes(searchTerm) || candidateNumber.includes(searchTerm)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+function voteAll(candidateId, votesCount) {
+    if (!confirm(`Voulez-vous attribuer ${votesCount} votes à ce candidat ?`)) {
+        return;
+    }
+    
+    fetch(`/vote/${candidateId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            alert('❌ ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Erreur lors du vote');
+    });
+}
+
+// OPTIMISATION : 1 seule requête pour TOUS les votes au lieu de {{ candidates|length }} requêtes
+function updateAllVotes() {
+    fetch('/get_all_votes')
+        .then(response => response.json())
+        .then(votesData => {
+            // Mettre à jour tous les compteurs en une fois
+            {% for candidate in candidates %}
+            const voteElement{{ candidate.id }} = document.getElementById(`votes-{{ candidate.id }}`);
+            if (voteElement{{ candidate.id }} && votesData[{{ candidate.id }}] !== undefined) {
+                voteElement{{ candidate.id }}.innerHTML = 
+                    `<i class="fas fa-star"></i> ${votesData[{{ candidate.id }}]} votes`;
+            }
+            {% endfor %}
+        })
+        .catch(error => console.log('Mise à jour des votes en arrière-plan'));
+}
+
+// Mise à jour toutes les 5 secondes (1 seule requête au lieu de {{ candidates|length }})
+setInterval(updateAllVotes, 5000);
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .admin-login-container {
+        max-width: 450px;
+        margin: 150px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    .admin-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .admin-header i {
+        font-size: 4em;
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+
+    .admin-header h2 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: border 0.3s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .btn-login {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <h1>WEB IMPACT SHOW</h1>
+    <div class="subtitle">Administration</div>
+</div>
+
+<div class="admin-login-container">
+    <div class="admin-header">
+        <i class="fas fa-shield-alt"></i>
+        <h2>Accès Sécurisé</h2>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_login') }}">
+        <div class="form-group">
+            <label for="password"><i class="fas fa-lock"></i> Mot de passe</label>
+            <input type="password" id="password" name="password" required autofocus>
+        </div>
+
+        <button type="submit" class="btn-login">
+            <i class="fas fa-sign-in-alt"></i> Se Connecter
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+{% endblock %}

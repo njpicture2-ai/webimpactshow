@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .confirm-container {
+        max-width: 600px;
+        margin: 100px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+
+    .confirm-icon {
+        font-size: 5em;
+        color: #11998e;
+        margin-bottom: 20px;
+    }
+
+    .confirm-title {
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .confirm-message {
+        font-size: 1.2em;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .package-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .package-info h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .confirm-btn {
+        flex: 1;
+        min-width: 200px;
+        padding: 20px 30px;
+        font-size: 1.3em;
+        border-radius: 15px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s;
+        font-weight: 700;
+    }
+
+    .success-btn {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+    }
+
+    .success-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(17, 153, 142, 0.4);
+    }
+
+    .cancel-btn {
+        background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(238, 9, 121, 0.4);
+    }
+
+    .important-note {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .important-note strong {
+        color: #856404;
+        font-size: 1.2em;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+        .confirm-container {
+            margin: 30px auto;
+            padding: 25px 20px;
+        }
+
+        .confirm-icon {
+            font-size: 3em;
+        }
+
+        .confirm-title {
+            font-size: 1.5em;
+        }
+
+        .confirm-message {
+            font-size: 1em;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            min-width: auto;
+            padding: 15px 20px;
+            font-size: 1.1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <h1>WEB IMPACT SHOW</h1>
+    <div class="subtitle">Confirmation de Paiement</div>
+</div>
+
+<div class="confirm-container">
+    <div class="confirm-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h2 class="confirm-title">🎉 Retour du Paiement Chariow</h2>
+    
+    <div class="important-note">
+        <strong>⚠️ IMPORTANT :</strong> Si vous avez <strong>PAYÉ avec succès</strong> sur Chariow, cliquez sur le bouton VERT ci-dessous pour recevoir vos votes immédiatement !
+    </div>
+
+    <div class="package-info">
+        <h3>📦 Bouquet: {{ package_name }}</h3>
+        <p><strong>🎫 {{ votes_count }} votes</strong> seront activés</p>
+    </div>
+
+    <p class="confirm-message" style="font-size: 1.1em; font-weight: 600; color: #11998e;">
+        👉 Avez-vous <strong>PAYÉ avec succès</strong> sur Chariow ?
+    </p>
+
+    <div class="button-group">
+        <a href="{{ url_for('payment_return', success='true') }}" class="confirm-btn success-btn">
+            <i class="fas fa-check-circle"></i> OUI, J'AI PAYÉ ✅
+        </a>
+        <a href="{{ url_for('payment_return', success='false') }}" class="confirm-btn cancel-btn">
+            <i class="fas fa-times-circle"></i> NON, ANNULER ❌
+        </a>
+    </div>
+</div>
+{% endblock %}

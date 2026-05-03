@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .laureates-page {
+        padding: 20px 0;
+    }
+    
+    .laureates-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-radius: 20px;
+        border: 2px solid #ffd700;
+        box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+    }
+    
+    .laureates-header h1 {
+        color: #ffd700;
+        font-size: 2.5em;
+        font-weight: 800;
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    
+    .laureates-header h1 i {
+        margin-right: 15px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .laureates-header p {
+        color: #c9d1d9;
+        font-size: 1.1em;
+    }
+    
+    .last-sync {
+        color: #888;
+        font-size: 0.9em;
+        margin-top: 15px;
+    }
+    
+    .no-laureates {
+        text-align: center;
+        padding: 60px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-radius: 20px;
+        border: 2px solid #444;
+    }
+    
+    .no-laureates i {
+        font-size: 4em;
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    .no-laureates h2 {
+        color: #888;
+        margin-bottom: 10px;
+    }
+    
+    .no-laureates p {
+        color: #666;
+    }
+    
+    .domain-section {
+        margin-bottom: 40px;
+    }
+    
+    .domain-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 25px;
+        background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+        border-radius: 15px;
+        margin-bottom: 20px;
+        border-left: 5px solid #ffd700;
+    }
+    
+    .domain-title i {
+        font-size: 1.5em;
+        color: #ffd700;
+    }
+    
+    .domain-title h2 {
+        color: #fff;
+        font-size: 1.4em;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .laureates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+    
+    .laureate-card {
+        background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 2px solid #ffd700;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .laureate-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+    
+    .laureate-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ffd700, #ffec8b, #ffd700);
+    }
+    
+    .trophy-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        z-index: 10;
+    }
+    
+    .trophy-badge.rank-1 {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+    }
+    
+    .trophy-badge.rank-2 {
+        background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+    }
+    
+    .trophy-badge.rank-3 {
+        background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+    }
+    
+    .trophy-badge i {
+        color: #1a1a1a;
+        font-size: 1.5em;
+    }
+    
+    .rank-mention {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+        color: #1a1a1a;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.75em;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+    
+    .rank-mention.rank-2 {
+        background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+    }
+    
+    .rank-mention.rank-3 {
+        background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+    }
+    
+    .laureate-photo {
+        width: 100%;
+        height: 280px;
+        object-fit: contain;
+        object-position: center top;
+        background: #1a1a1a;
+        border-bottom: 3px solid #ffd700;
+    }
+    
+    .laureate-info {
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .laureate-category {
+        color: #ffd700;
+        font-size: 0.85em;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .laureate-name {
+        color: #fff;
+        font-size: 1.4em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .laureate-votes {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+        color: #1a1a1a;
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.1em;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .laureate-number {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #ffd700;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9em;
+        border: 1px solid #ffd700;
+    }
+    
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #ffd700;
+        padding: 15px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 2px solid #ffd700;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+    
+    .back-btn:hover {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+        color: #1a1a1a;
+        transform: translateX(-5px);
+    }
+    
+    @media (max-width: 768px) {
+        .laureates-header h1 {
+            font-size: 1.8em;
+        }
+        
+        .laureates-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .laureate-photo {
+            height: 200px;
+        }
+        
+        .domain-title h2 {
+            font-size: 1.1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="laureates-page">
+    <a href="{{ url_for('index') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Retour à l'accueil
+    </a>
+    
+    <div class="laureates-header">
+        <h1><i class="fas fa-trophy"></i> LAURÉATS</h1>
+        <p>Les gagnants de chaque catégorie du WEB IMPACT SHOW</p>
+        {% if last_sync %}
+        <p class="last-sync">
+            <i class="fas fa-sync-alt"></i> Dernière synchronisation : {{ last_sync.strftime('%d/%m/%Y à %H:%M') }}
+        </p>
+        {% endif %}
+    </div>
+    
+    {% if grouped_laureates %}
+        {% for group_name, laureates_in_group in grouped_laureates.items() %}
+        <div class="domain-section">
+            <div class="domain-title">
+                <i class="fas fa-star"></i>
+                <h2>{{ group_name }}</h2>
+            </div>
+            
+            <div class="laureates-grid">
+                {% for laureate in laureates_in_group %}
+                <div class="laureate-card">
+                    <div class="trophy-badge rank-{{ laureate.position }}">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <span class="laureate-number">N°{{ laureate.candidate.number }}</span>
+                    {% if laureate.candidate.photo_data %}
+                    <img src="{{ url_for('get_candidate_photo', candidate_id=laureate.candidate.id) }}" 
+                         alt="{{ laureate.candidate.name }}" 
+                         class="laureate-photo">
+                    {% else %}
+                    <div class="laureate-photo" style="display: flex; align-items: center; justify-content: center; background: #2d2d2d;">
+                        <i class="fas fa-user" style="font-size: 4em; color: #666;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="laureate-info">
+                        {% set rank_text = "1er" if laureate.position == 1 else ("2ème" if laureate.position == 2 else "3ème") %}
+                        <span class="rank-mention rank-{{ laureate.position }}">{{ rank_text }} Meilleur</span>
+                        <div class="laureate-category">
+                            <i class="fas fa-award"></i>
+                            {{ laureate.category.name }}
+                        </div>
+                        <h3 class="laureate-name">{{ laureate.candidate.name }}</h3>
+                        <div class="laureate-votes">
+                            <i class="fas fa-vote-yea"></i>
+                            {{ "{:,}".format(laureate.vote_count).replace(",", " ") }} votes
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-laureates">
+        <i class="fas fa-hourglass-half"></i>
+        <h2>Aucun lauréat pour le moment</h2>
+        <p>Les résultats seront disponibles après la synchronisation par l'administrateur.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

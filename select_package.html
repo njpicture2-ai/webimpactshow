@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .package-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+        border: 2px solid #d4af37;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .package-header h2 {
+        color: #d4af37;
+        margin-bottom: 15px;
+    }
+
+    .package-header h3 {
+        color: #ffffff;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+    }
+
+    .selected-candidate {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 15px;
+        border: 1px solid #d4af37;
+    }
+
+    .selected-candidate h3 {
+        color: #cccccc;
+        font-size: 0.95em;
+        margin-bottom: 5px;
+    }
+
+    .selected-candidate h2 {
+        color: #d4af37;
+        font-size: 1.3em;
+        font-weight: 700;
+    }
+
+    .selected-candidate img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #d4af37;
+    }
+
+    .packages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .package-card {
+        background: white;
+        border-radius: 8px;
+        padding: 10px 8px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .package-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .package-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+    }
+
+    .package-name {
+        font-size: 0.85em;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    .package-price {
+        font-size: 0.8em;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .package-votes {
+        font-size: 1.3em;
+        font-weight: 800;
+        color: #11998e;
+        margin: 8px 0;
+    }
+
+    .package-votes-label {
+        font-size: 0.75em;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .buy-btn {
+        width: 100%;
+        padding: 8px;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.85em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+    }
+
+    .buy-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(17, 153, 142, 0.3);
+    }
+
+    .premium-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+
+    .premium-card .package-name,
+    .premium-card .package-price,
+    .premium-card .package-votes,
+    .premium-card .package-votes-label {
+        color: white;
+    }
+
+    .vip-card {
+        background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+        color: white;
+    }
+
+    .vip-card .package-name,
+    .vip-card .package-price,
+    .vip-card .package-votes,
+    .vip-card .package-votes-label {
+        color: white;
+    }
+
+    /* OPTIMISATION MOBILE - Sélection de Package */
+    @media (max-width: 768px) {
+        .package-header {
+            padding: 15px 10px;
+            margin-bottom: 15px;
+        }
+
+        .package-header h2 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .selected-candidate {
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .selected-candidate img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .selected-candidate h3 {
+            font-size: 0.8em;
+            margin-bottom: 4px;
+        }
+
+        .selected-candidate h2 {
+            font-size: 0.95em;
+        }
+
+        .packages-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin-top: 12px;
+        }
+
+        .package-card {
+            padding: 8px 6px;
+        }
+
+        .package-name {
+            font-size: 0.75em;
+            margin-bottom: 4px;
+        }
+
+        .package-price {
+            font-size: 0.7em;
+            margin-bottom: 3px;
+        }
+
+        .package-votes {
+            font-size: 1.1em;
+            margin: 6px 0;
+        }
+
+        .package-votes-label {
+            font-size: 0.65em;
+            margin-bottom: 6px;
+        }
+
+        .buy-btn {
+            padding: 6px;
+            font-size: 0.7em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .package-header {
+            padding: 12px 8px;
+            margin-bottom: 12px;
+        }
+
+        .package-header h2 {
+            font-size: 0.95em;
+        }
+
+        .selected-candidate img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .selected-candidate h3 {
+            font-size: 0.7em;
+        }
+
+        .selected-candidate h2 {
+            font-size: 0.85em;
+        }
+
+        .packages-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .package-card {
+            padding: 6px 4px;
+            border-radius: 6px;
+        }
+
+        .package-name {
+            font-size: 0.65em;
+            margin-bottom: 3px;
+        }
+
+        .package-price {
+            font-size: 0.6em;
+            margin-bottom: 2px;
+        }
+
+        .package-votes {
+            font-size: 1em;
+            margin: 4px 0;
+        }
+
+        .package-votes-label {
+            font-size: 0.55em;
+            margin-bottom: 4px;
+        }
+
+        .buy-btn {
+            padding: 5px;
+            font-size: 0.6em;
+            border-radius: 4px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <h1>WEB IMPACT SHOW</h1>
+    <div class="subtitle">Sélectionnez votre bouquet de votes</div>
+</div>
+
+<div class="package-header">
+    <h2><i class="fas fa-shopping-bag"></i> Choisissez votre Bouquet</h2>
+    <div class="selected-candidate">
+        {% if candidate.photo_data %}
+        <img src="{{ url_for('get_candidate_photo', candidate_id=candidate.id) }}" alt="{{ candidate.name }}">
+        {% else %}
+        <img src="https://via.placeholder.com/80?text=N°{{ candidate.number }}" alt="{{ candidate.name }}">
+        {% endif %}
+        <div>
+            <h3>Vous votez pour:</h3>
+            <h2>N°{{ candidate.number }} - {{ candidate.name }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="packages-grid">
+    {% for package in packages %}
+    <div class="package-card {% if package.id == 'premium' %}premium-card{% elif package.id == 'vip' %}vip-card{% endif %}">
+        <div class="package-name">
+            {% if package.id == 'vip' %}<i class="fas fa-crown"></i>{% endif %}
+            {{ package.name }}
+        </div>
+        <div class="package-price">{{ package.price }}</div>
+        <div class="package-votes">{{ package.votes }}</div>
+        <div class="package-votes-label">votes</div>
+        <a href="{{ url_for('payment', package_id=package.id) }}" class="buy-btn">
+            <i class="fas fa-credit-card"></i> Acheter
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="text-align: center; margin-top: 30px; margin-bottom: 40px;">
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Retour à l'accueil
+    </a>
+</div>
+{% endblock %}

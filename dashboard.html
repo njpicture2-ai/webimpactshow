@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-card i {
+        font-size: 3em;
+        margin-bottom: 15px;
+    }
+
+    .stat-card h3 {
+        font-size: 2.5em;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .stat-card p {
+        color: #666;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    .winner-section {
+        background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+    }
+
+    .winner-section::before {
+        content: '👑';
+        position: absolute;
+        top: -30px;
+        left: -30px;
+        font-size: 15em;
+        opacity: 0.1;
+    }
+
+    .winner-section h2 {
+        color: white;
+        font-size: 2.5em;
+        font-weight: 800;
+        margin-bottom: 30px;
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .winner-card {
+        background: rgba(255,255,255,0.95);
+        padding: 30px;
+        border-radius: 15px;
+        display: inline-block;
+        min-width: 400px;
+    }
+
+    .winner-photo {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 10px solid #ffd700;
+        margin-bottom: 20px;
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .winner-photo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 50px rgba(255, 215, 0, 0.6);
+    }
+
+    .winner-number {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .winner-name {
+        font-size: 2em;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .winner-votes {
+        font-size: 3em;
+        font-weight: 800;
+        color: #667eea;
+    }
+
+    .ranking-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .ranking-section h2 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+    }
+
+    .ranking-item:hover {
+        transform: translateX(10px);
+        background: #e9ecef;
+    }
+
+    .rank-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8em;
+        font-weight: 800;
+        color: white;
+        margin-right: 20px;
+    }
+
+    .rank-1 { background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); }
+    .rank-2 { background: linear-gradient(135deg, #c0c0c0 0%, #999999 100%); }
+    .rank-3 { background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%); }
+    .rank-4 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+    .ranking-photo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .ranking-photo:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .ranking-info {
+        flex: 1;
+    }
+
+    .ranking-name {
+        font-size: 1.4em;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .ranking-number {
+        color: #666;
+        font-weight: 600;
+    }
+
+    .ranking-votes {
+        font-size: 1.8em;
+        font-weight: 800;
+        color: #667eea;
+    }
+
+    /* OPTIMISATION MOBILE - Tableau de Bord */
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-card i {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+        }
+
+        .stat-card p {
+            font-size: 1em;
+        }
+
+        .winner-section {
+            padding: 25px 15px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+        }
+
+        .winner-section::before {
+            font-size: 10em;
+            top: -20px;
+            left: -20px;
+        }
+
+        .winner-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .winner-card {
+            padding: 20px;
+            min-width: auto;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .winner-photo {
+            width: 180px;
+            height: 180px;
+            border-width: 6px;
+            margin-bottom: 15px;
+        }
+
+        .winner-number {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            margin-bottom: 12px;
+        }
+
+        .winner-name {
+            font-size: 1.5em;
+            margin-bottom: 12px;
+        }
+
+        .winner-votes {
+            font-size: 2.2em;
+        }
+
+        .ranking-section {
+            padding: 20px 15px;
+        }
+
+        .ranking-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .ranking-item {
+            padding: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ranking-item:hover {
+            transform: translateX(0);
+        }
+
+        .rank-badge {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .ranking-photo {
+            width: 70px;
+            height: 70px;
+            margin-right: 15px;
+        }
+
+        .ranking-info {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .ranking-name {
+            font-size: 1.2em;
+        }
+
+        .ranking-number {
+            font-size: 0.9em;
+        }
+
+        .ranking-votes {
+            font-size: 1.4em;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .winner-photo {
+            width: 150px;
+            height: 150px;
+            border-width: 5px;
+        }
+
+        .winner-name {
+            font-size: 1.3em;
+        }
+
+        .winner-votes {
+            font-size: 1.8em;
+        }
+
+        .ranking-item {
+            padding: 12px;
+        }
+
+        .rank-badge {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        .ranking-photo {
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+        }
+
+        .ranking-name {
+            font-size: 1.1em;
+        }
+
+        .ranking-votes {
+            font-size: 1.2em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <div class="header-text">
+        <h1>WEB IMPACT SHOW</h1>
+        <div class="subtitle">Tableau de Bord - Statistiques en Direct</div>
+    </div>
+    
+    <!-- Menu Hamburger -->
+    {% if session.user_id %}
+    <div class="hamburger-menu" onclick="toggleMenu()">
+        <div class="hamburger-label">Menu</div>
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="dropdown-menu">
+        <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Accueil</a>
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-bar"></i> Tableau de Bord</a>
+        <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> À-propos</a>
+        {% if session.admin_logged_in %}
+        <a href="{{ url_for('admin_panel') }}"><i class="fas fa-cog"></i> Panneau Admin</a>
+        <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion Admin</a>
+        {% else %}
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <i class="fas fa-users" style="color: #667eea;"></i>
+        <h3>{{ total_participants }}</h3>
+        <p>Participants</p>
+    </div>
+
+    <div class="stat-card">
+        <i class="fas fa-star" style="color: #ffd700;"></i>
+        {% if top_candidate %}
+        <h3>{{ top_candidate.vote_count }}</h3>
+        <p>Meilleur Vote</p>
+        {% else %}
+        <h3>0</h3>
+        <p>Meilleur Vote</p>
+        {% endif %}
+    </div>
+
+    <div class="stat-card">
+        <i class="fas fa-vote-yea" style="color: #11998e;"></i>
+        <h3>{{ total_votes }}</h3>
+        <p>Total des Votes</p>
+    </div>
+</div>
+
+{% if top_candidate %}
+<div class="winner-section">
+    <h2><i class="fas fa-trophy"></i> MEILLEUR VOTE</h2>
+    <div class="winner-card">
+        {% if top_candidate.photo_data %}
+        <img src="{{ url_for('get_candidate_photo', candidate_id=top_candidate.id) }}" alt="{{ top_candidate.name }}" class="winner-photo">
+        {% else %}
+        <img src="https://via.placeholder.com/200?text=N°{{ top_candidate.number }}" alt="{{ top_candidate.name }}" class="winner-photo">
+        {% endif %}
+        
+        <div class="winner-number">N°{{ top_candidate.number }}</div>
+        <div class="winner-name">{{ top_candidate.name }}</div>
+        <div class="winner-votes">
+            <i class="fas fa-star"></i> {{ top_candidate.vote_count }} votes
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="ranking-section">
+    <h2><i class="fas fa-medal"></i> Classement des 4 Premiers</h2>
+    
+    {% for candidate in top_4_candidates %}
+    <div class="ranking-item">
+        <div class="rank-badge rank-{{ loop.index }}">
+            {% if loop.index == 1 %}🥇
+            {% elif loop.index == 2 %}🥈
+            {% elif loop.index == 3 %}🥉
+            {% else %}{{ loop.index }}{% endif %}
+        </div>
+        
+        {% if candidate.photo_data %}
+        <img src="{{ url_for('get_candidate_photo', candidate_id=candidate.id) }}" alt="{{ candidate.name }}" class="ranking-photo">
+        {% else %}
+        <img src="https://via.placeholder.com/60?text={{ loop.index }}" alt="{{ candidate.name }}" class="ranking-photo">
+        {% endif %}
+        
+        <div class="ranking-info">
+            <div class="ranking-name">{{ candidate.name }}</div>
+            <div class="ranking-number">Candidat N°{{ candidate.number }}</div>
+        </div>
+        
+        <div class="ranking-votes">
+            <i class="fas fa-star"></i> {{ candidate.vote_count }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateDashboard() {
+    location.reload();
+}
+
+setInterval(updateDashboard, 10000);
+</script>
+{% endblock %}

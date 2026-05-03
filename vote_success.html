@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+
+{% block title %}Vote Réussi - WEB IMPACT SHOW{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        min-height: 100vh;
+    }
+
+    .success-container {
+        max-width: 450px;
+        margin: 20px auto;
+        padding: 10px;
+    }
+
+    .success-card {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        border-radius: 18px;
+        padding: 20px 15px;
+        box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+        border: 2px solid rgba(255, 215, 0, 0.5);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .success-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+        animation: logoFloat 0.8s ease-in-out;
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes logoFloat {
+        0% { transform: scale(0) rotate(0deg); }
+        50% { transform: scale(1.2) rotate(5deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .success-title {
+        font-size: 1.05em;
+        font-weight: 900;
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .candidate-info {
+        margin: 18px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .candidate-photo {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ffd700;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        margin-bottom: 10px;
+    }
+
+    .candidate-name {
+        font-size: 1em;
+        font-weight: 700;
+        color: #ffd700;
+        margin-bottom: 5px;
+    }
+
+    .thank-message {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        margin-bottom: 12px;
+    }
+
+    .vote-details {
+        background: rgba(255, 215, 0, 0.05);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 10px;
+        padding: 12px 10px;
+        margin: 12px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .detail-value {
+        font-size: 0.8em;
+        font-weight: 700;
+        color: #ffd700;
+    }
+
+    .invoice-badge {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #000;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-weight: 900;
+        font-size: 0.7em;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin: 8px 0;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .votes-count {
+        font-size: 1.3em;
+        font-weight: 900;
+        color: #ffd700;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .btn-home {
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #000;
+        padding: 8px 22px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 0.75em;
+        margin-top: 10px;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+    }
+
+    .celebration {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 30px;
+        opacity: 0;
+        animation: celebrate 2s ease-out forwards;
+    }
+
+    @keyframes celebrate {
+        0% { opacity: 0; transform: translateX(-50%) translateY(0) scale(0); }
+        50% { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1.5); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-40px) scale(1); }
+    }
+
+    /* RESPONSIVE TABLETTE */
+    @media (max-width: 768px) {
+        .success-container {
+            margin: 15px auto;
+            max-width: 400px;
+            padding: 10px;
+        }
+
+        .success-card {
+            padding: 18px 12px;
+        }
+
+        .success-title {
+            font-size: 1em;
+        }
+
+        .success-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+        .candidate-photo {
+            width: 80px;
+            height: 80px;
+        }
+
+        .candidate-name {
+            font-size: 0.95em;
+        }
+
+        .votes-count {
+            font-size: 1.25em;
+        }
+    }
+
+    .btn-download {
+        display: inline-block;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 8px 22px;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 900;
+        font-size: 0.75em;
+        margin-top: 10px;
+        margin-right: 6px;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-download:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(40, 167, 69, 0.6);
+    }
+
+    /* RESPONSIVE MOBILE - ULTRA COMPACT */
+    @media (max-width: 480px) {
+        .success-container {
+            margin: 6px auto;
+            padding: 5px;
+            max-width: 340px;
+        }
+
+        .success-card {
+            padding: 12px 8px;
+            border-radius: 12px;
+        }
+
+        .success-icon {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .success-title {
+            font-size: 0.78em;
+            margin-bottom: 5px;
+        }
+
+        .candidate-photo {
+            width: 65px;
+            height: 65px;
+            border: 2px solid #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .candidate-name {
+            font-size: 0.78em;
+            margin-bottom: 3px;
+        }
+
+        .thank-message {
+            font-size: 0.6em;
+            margin-bottom: 8px;
+        }
+
+        .invoice-badge {
+            padding: 3px 8px;
+            font-size: 0.6em;
+            margin: 5px 0;
+        }
+
+        .candidate-info {
+            margin: 12px 0;
+        }
+
+        .vote-details {
+            padding: 8px 6px;
+            margin: 8px 0;
+            border-radius: 8px;
+        }
+
+        .detail-item {
+            padding: 4px 0;
+            flex-direction: column;
+            text-align: center;
+            gap: 2px;
+        }
+
+        .detail-label {
+            font-size: 0.6em;
+        }
+
+        .detail-value {
+            font-size: 0.7em;
+        }
+
+        .votes-count {
+            font-size: 1.1em;
+        }
+
+        .btn-home {
+            padding: 7px 16px;
+            font-size: 0.65em;
+            margin-top: 8px;
+        }
+
+        .btn-download {
+            padding: 7px 16px;
+            font-size: 0.65em;
+            margin-top: 8px;
+            margin-right: 3px;
+        }
+
+        .celebration {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="success-container">
+    <div class="celebration">🎉</div>
+    <div class="celebration" style="animation-delay: 0.3s;">⭐</div>
+    <div class="celebration" style="animation-delay: 0.6s;">✨</div>
+
+    <div class="success-card">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW" class="success-icon">
+
+        <h1 class="success-title">FACTURE DE VOTE - WEB IMPACT SHOW</h1>
+
+        <div class="candidate-info">
+            <img src="{{ url_for('get_candidate_photo', candidate_id=candidate.id) }}" alt="{{ candidate.name }}" class="candidate-photo">
+            <div class="candidate-name">{{ candidate.name }}</div>
+            <div class="thank-message">Merci de m'avoir soutenu(e)</div>
+        </div>
+
+        <div class="invoice-badge">
+            <i class="fas fa-receipt"></i>
+            Facture N° {{ invoice_number }}
+        </div>
+
+        <div class="vote-details">
+            <div class="detail-item">
+                <span class="detail-label">
+                    <i class="fas fa-star"></i>
+                    Votes attribués
+                </span>
+                <span class="votes-count">{{ votes_cast }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Montant payé
+                </span>
+                <span class="detail-value">{{ "{:,}".format(amount_paid).replace(',', ' ') }} FC</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Date et heure (Lubumbashi)
+                </span>
+                <span class="detail-value">{{ vote_date|lubumbashi_datetime }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    <i class="fas fa-user"></i>
+                    Payeur
+                </span>
+                <span class="detail-value">{{ user.full_name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    <i class="fas fa-phone"></i>
+                    Contact
+                </span>
+                <span class="detail-value">{{ user.phone }}</span>
+            </div>
+        </div>
+
+        <button onclick="downloadInvoiceAsJPG()" class="btn-download">
+            <i class="fas fa-download"></i> Télécharger votre reçu (JPG)
+        </button>
+
+        <a href="{{ url_for('index') }}" class="btn-home">
+            <i class="fas fa-home"></i> Retour à l'accueil
+        </a>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    // Ajouter des confettis aléatoires
+    for(let i = 0; i < 6; i++) {
+        setTimeout(() => {
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.style.left = Math.random() * 100 + '%';
+            celebration.style.animationDelay = '0s';
+            celebration.innerHTML = ['🎉', '⭐', '✨'][Math.floor(Math.random() * 3)];
+            document.querySelector('.success-container').appendChild(celebration);
+        }, i * 200);
+    }
+
+    // Fonction pour télécharger la facture en JPG
+    function downloadInvoiceAsJPG() {
+        const card = document.querySelector('.success-card');
+        const downloadBtn = document.querySelector('.btn-download');
+        const homeBtn = document.querySelector('.btn-home');
+        
+        // Cacher temporairement les boutons
+        downloadBtn.style.display = 'none';
+        homeBtn.style.display = 'none';
+        
+        // Capturer la carte en image
+        html2canvas(card, {
+            backgroundColor: '#1a1a1a',
+            scale: 2, // Haute qualité
+            logging: false,
+            useCORS: true
+        }).then(canvas => {
+            // Convertir en JPG
+            canvas.toBlob(function(blob) {
+                // Créer un lien de téléchargement
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'facture_vote_{{ invoice_number }}.jpg';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                // Réafficher les boutons
+                downloadBtn.style.display = 'inline-block';
+                homeBtn.style.display = 'inline-block';
+            }, 'image/jpeg', 0.95);
+        }).catch(error => {
+            console.error('Erreur lors de la génération de l\'image:', error);
+            alert('Erreur lors du téléchargement. Veuillez réessayer.');
+            
+            // Réafficher les boutons en cas d'erreur
+            downloadBtn.style.display = 'inline-block';
+            homeBtn.style.display = 'inline-block';
+        });
+    }
+
+    // Fonction de synthèse vocale automatique AMÉLIORÉE
+    function speakVoteMessage() {
+        console.log('🔊 Tentative de déclenchement de la voix...');
+        
+        if (!('speechSynthesis' in window)) {
+            console.error('❌ La synthèse vocale n\'est pas supportée par ce navigateur');
+            return;
+        }
+
+        // Créer le message de remerciement
+        const candidateNumber = {{ candidate.number }};
+        const message = `MERCI D'AVOIR VOTÉ POUR LE NUMÉRO ${candidateNumber}. Merci de télécharger votre reçu.`;
+        
+        console.log('📝 Message vocal:', message);
+
+        // Fonction pour lancer la voix
+        const speak = () => {
+            // Annuler toute synthèse en cours
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            
+            // Événements pour déboguer
+            utterance.onstart = () => console.log('✅ Voix démarrée !');
+            utterance.onend = () => console.log('✅ Voix terminée !');
+            utterance.onerror = (e) => console.error('❌ Erreur voix:', e);
+            
+            // Trouver une voix française
+            const voices = window.speechSynthesis.getVoices();
+            console.log('🎙️ Voix disponibles:', voices.length);
+            
+            const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+            if (frenchVoice) {
+                console.log('🇫🇷 Voix française trouvée:', frenchVoice.name);
+                utterance.voice = frenchVoice;
+            } else {
+                console.log('⚠️ Aucune voix française, utilisation de la voix par défaut');
+            }
+            
+            // Lancer la synthèse
+            window.speechSynthesis.speak(utterance);
+            console.log('🚀 Synthèse vocale lancée');
+        };
+
+        // Charger les voix et lancer
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            speak();
+        } else {
+            console.log('⏳ Attente du chargement des voix...');
+            window.speechSynthesis.onvoiceschanged = () => {
+                console.log('✅ Voix chargées !');
+                speak();
+            };
+            // Fallback : essayer après 500ms
+            setTimeout(speak, 500);
+        }
+    }
+
+    // Lancer la synthèse vocale avec plusieurs tentatives
+    console.log('⏰ Programmation de la voix dans 1 seconde...');
+    setTimeout(() => {
+        console.log('🎬 Déclenchement de la voix maintenant !');
+        speakVoteMessage();
+    }, 1000);
+</script>
+{% endblock %}
