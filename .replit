@@ -1,0 +1,47 @@
+entrypoint = "main.py"
+modules = ["python-3.11", "python3", "postgresql-16"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["freetype", "glibcLocales", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib"]
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=4", "--threads=2", "--timeout=120", "--worker-class=sync", "--preload", "app:app"]
+deploymentTarget = "autoscale"
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Server"
+
+[[workflows.workflow]]
+name = "Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "gunicorn --bind=0.0.0.0:5000 --workers=4 --threads=2 --timeout=120 --worker-class=sync --preload app:app"
+waitForPort = 5000
+
+[[ports]]
+localPort = 5000
+externalPort = 80

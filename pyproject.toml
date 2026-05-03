@@ -1,0 +1,18 @@
+[project]
+name = "python-template"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.1.2",
+    "flask-sqlalchemy>=3.1.1",
+    "gunicorn>=23.0.0",
+    "html2image>=2.0.7",
+    "pillow>=11.3.0",
+    "psycopg2-binary>=2.9.11",
+    "python-dotenv>=1.1.1",
+    "pytz>=2025.2",
+    "reportlab>=4.4.4",
+    "werkzeug>=3.1.3",
+]
