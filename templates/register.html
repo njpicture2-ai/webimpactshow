@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block body_class %}register-page{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Page entière en noir */
+    body.register-page {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%) !important;
+        min-height: 100vh !important;
+    }
+
+    /* Header en style noir/doré */
+    .header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+        border-bottom: 2px solid #d4af37 !important;
+    }
+
+    .header h1 {
+        color: #d4af37 !important;
+    }
+
+    .header .subtitle {
+        color: #ffffff !important;
+    }
+
+    .register-container {
+        max-width: 500px;
+        margin: 80px auto;
+        background: linear-gradient(135deg, #4a0e0e 0%, #6b1515 100%);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        border: 2px solid #d4af37;
+        position: relative;
+        overflow: visible;
+    }
+
+    .register-header {
+        position: relative;
+    }
+
+    .santa-hat {
+        position: absolute;
+        top: -30px;
+        left: calc(50% - 85px);
+        width: 55px;
+        height: auto;
+        transform: rotate(15deg);
+        z-index: 100;
+        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .register-header h2 {
+        color: #d4af37;
+        font-size: 2em;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+    }
+
+    .register-header p {
+        color: #cccccc;
+        font-size: 1.1em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .form-group label i {
+        color: #d4af37;
+        margin-right: 5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #444;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s;
+        background: #0d0d0d;
+        color: #ffffff;
+    }
+
+    .form-group input::placeholder {
+        color: #666;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #d4af37;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(135deg, #d4af37 0%, #f5d678 50%, #d4af37 100%);
+        color: #1a1a1a;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+    }
+
+    .btn-submit:active {
+        transform: translateY(0);
+    }
+
+    /* Style pour le bouton retour */
+    a[href*="index"] {
+        color: #d4af37 !important;
+    }
+
+    /* OPTIMISATION MOBILE - Page d'Inscription */
+    @media (max-width: 768px) {
+        .register-container {
+            margin: 30px auto;
+            padding: 25px 20px;
+            border-radius: 15px;
+            max-width: 90%;
+        }
+
+        .register-header h2 {
+            font-size: 1.5em;
+        }
+
+        .register-header p {
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            font-size: 0.95em;
+        }
+
+        .btn-submit {
+            padding: 12px;
+            font-size: 1em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .register-container {
+            margin: 20px auto;
+            padding: 20px 15px;
+        }
+
+        .register-header h2 {
+            font-size: 1.3em;
+        }
+
+        .form-group input {
+            padding: 10px;
+        }
+
+        .btn-submit {
+            padding: 10px;
+            font-size: 0.95em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo-web-impact-show.png') }}" alt="WEB IMPACT SHOW Logo" class="logo">
+    </div>
+    <div class="header-text">
+        <h1>WEB IMPACT SHOW</h1>
+        <div class="subtitle">Concours des créateurs de contenu Web - 1ère Édition</div>
+    </div>
+</div>
+
+<div class="register-container">
+    <div class="register-header">
+        {% if is_christmas_hat_active %}
+        <img src="{{ url_for('static', filename='santa-hat.png') }}" alt="Joyeux Noël" class="santa-hat">
+        {% endif %}
+        <h2><i class="fas fa-user-plus"></i> S'inscrire</h2>
+        <p>Inscrivez-vous pour participer au vote</p>
+        <button onclick="playVoiceInstruction()" id="audioBtn" style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            color: white;
+            border: 2px solid #d4af37;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(212, 175, 55, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 0, 0, 0.3)'">
+            <i class="fas fa-volume-up"></i> Écouter les instructions
+        </button>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div style="padding: 12px; margin-bottom: 20px; border-radius: 8px; 
+                        background: {% if category == 'error' %}#fee{% else %}#efe{% endif %}; 
+                        border-left: 4px solid {% if category == 'error' %}#c33{% else %}#3c3{% endif %}; 
+                        color: {% if category == 'error' %}#c33{% else %}#3c3{% endif %}; 
+                        font-weight: 600;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+        <div class="form-group">
+            <label for="full_name"><i class="fas fa-user"></i> Nom Complet</label>
+            <input type="text" id="full_name" name="full_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone"><i class="fas fa-phone"></i> Numéro de téléphone</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+        </button>
+    </form>
+</div>
+
+<script>
+// Forcer le fond rouge bordeaux festif
+document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%)';
+document.body.style.backgroundAttachment = 'fixed';
+
+// Fonction pour jouer l'instruction vocale
+function playVoiceInstruction() {
+    // Vérifier si le navigateur supporte la synthèse vocale
+    if ('speechSynthesis' in window) {
+        // Annuler toute instruction vocale en cours
+        window.speechSynthesis.cancel();
+        
+        // Créer l'instruction vocale
+        const message = new SpeechSynthesisUtterance();
+        message.text = "Bonjour. Veuillez introduire votre nom et votre numéro téléphone et cliquez sur Se connecter.";
+        message.lang = 'fr-FR'; // Langue française
+        message.rate = 0.9; // Vitesse de parole (0.9 = un peu plus lent)
+        message.pitch = 1; // Tonalité
+        message.volume = 1; // Volume (0 à 1)
+        
+        // Changer le bouton pendant la lecture
+        const audioBtn = document.getElementById('audioBtn');
+        const originalHTML = audioBtn.innerHTML;
+        audioBtn.innerHTML = '<i class="fas fa-volume-up fa-pulse"></i> En cours...';
+        audioBtn.disabled = true;
+        
+        // Remettre le bouton à la normale après la lecture
+        message.onend = function() {
+            audioBtn.innerHTML = originalHTML;
+            audioBtn.disabled = false;
+        };
+        
+        // Lire l'instruction vocale
+        window.speechSynthesis.speak(message);
+    } else {
+        alert('Désolé, votre navigateur ne supporte pas les instructions vocales.');
+    }
+}
+
+// Empêcher les doubles soumissions
+const form = document.getElementById('registerForm');
+const submitBtn = document.getElementById('submitBtn');
+let isSubmitting = false;
+
+form.addEventListener('submit', function(e) {
+    if (isSubmitting) {
+        e.preventDefault();
+        return false;
+    }
+    
+    const fullName = document.getElementById('full_name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    
+    if (!fullName || !phone) {
+        alert('⚠️ Veuillez remplir tous les champs');
+        e.preventDefault();
+        return false;
+    }
+    
+    isSubmitting = true;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+    
+    setTimeout(function() {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+    }, 10000);
+});
+</script>
+{% endblock %}
